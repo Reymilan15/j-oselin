@@ -61,21 +61,23 @@ body {
 
 .star {
   position: absolute;
-  width: 18px; height: 18px; /* Un poco más pequeñas para mayor elegancia */
-  border-radius: 100%; cursor: pointer;
-  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #dfc7ff 40%, #9644fd 100%);
-  /* Brillo estelar */
-  box-shadow: 0 0 15px 2px rgba(255, 255, 255, 0.8), 0 0 30px 5px rgba(150, 68, 253, 0.4);
-  animation: twinkle 2s infinite alternate ease-in-out; 
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  z-index: 3;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  /* El secreto del realismo: múltiples capas de brillo */
+  background: radial-gradient(circle, #fff 10%, rgba(255,255,255,0.8) 30%, transparent 70%);
+  box-shadow: 0 0 10px #fff, 0 0 20px rgba(255,255,255,0.5);
+  transition: transform 0.3s, filter 0.3s;
 }
 
-.star:hover { 
-  transform: scale(1.8) rotate(15deg); 
-  z-index: 10; 
-  animation: none;
-  filter: brightness(1.3);
+/* Efecto de destello (opcional) */
+.star::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 200%; height: 2px;
+  background: rgba(255,255,255,0.2);
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 @keyframes twinkle {
@@ -219,4 +221,5 @@ body {
   background: rgba(215, 110, 243, 0.4);
   transform: translateX(-5px);
 }
+
 
