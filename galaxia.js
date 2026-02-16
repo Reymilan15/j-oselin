@@ -1,10 +1,3 @@
-El error principal que tenías era de sintaxis (código mal pegado). Justo antes de la función drawConstellations, se había repetido el nombre de la función a mitad de una condición, lo que rompe todo el archivo JavaScript.
-
-He limpiado ese error y he asegurado que la función focusOn sea accesible globalmente para que tus botones de HTML no den error de undefined.
-
-Aquí tienes el código corregido y funcional:
-
-JavaScript
 
 const dedications = [
   "Como Virgo, siempre busqué el orden, hasta que tu fuego de Aries me enseñó la belleza del caos.",
@@ -289,6 +282,7 @@ function spawnWhispers() {
 }
 
 setInterval(spawnWhispers, 12000);
+
 
 
 
