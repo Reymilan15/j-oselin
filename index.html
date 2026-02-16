@@ -26,6 +26,11 @@
   </div>
   <div id="zoomMessage">Sin ti todo sería una galaxia fría y oscura...</div>
  <div id="musicControl">
+   <div id="constellationControls" style="display:none; position: fixed; top: 80px; right: 30px; z-index: 32; display: flex; flex-direction: column; gap: 10px;">
+  <button class="nav-btn" onclick="focusConstellation('virgo')">✨ Ver Virgo (Yo)</button>
+  <button class="nav-btn" onclick="focusConstellation('aries')">♈ Ver Aries (Ella)</button>
+  <button class="nav-btn" onclick="focusConstellation('all')">🌌 Ver Galaxia</button>
+</div>
    <audio id="bgmusic" loop preload="auto">
   <source src="luz.mp3" type="audio/mp3">
   <source src="https://cdn.pixabay.com/audio/2022/10/16/audio_127b5e0fa6.mp3" type="audio/mp3">
@@ -36,5 +41,6 @@
   <script src="galaxia.js"></script>
 </body>
 </html>
+
 
 
