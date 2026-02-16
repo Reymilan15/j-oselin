@@ -191,10 +191,6 @@ document.getElementById('enterBtn').onclick = function() {
   canvas.style.display = 'block';
   document.getElementById('whispers').style.display = 'block';
 };
-// Música romántica
-const bgmusic = document.getElementById('bgmusic');
-const musicBtn = document.getElementById('musicBtn');
-let musicOn = false;
 musicBtn.onclick = function() {
   if (musicOn) {
     bgmusic.pause();
@@ -202,19 +198,23 @@ musicBtn.onclick = function() {
     musicBtn.classList.remove('on');
     musicBtn.textContent = '🎵 Encender música';
   } else {
-    bgmusic.play()
-      .then(() => {
+    // Intentar recargar y reproducir
+    bgmusic.load(); 
+    const playPromise = bgmusic.play();
+
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
         musicOn = true;
         musicBtn.classList.add('on');
         musicBtn.textContent = '🎶 Apagar música';
-      })
-      .catch(e => {
-        alert("Activa la música manualmente haciendo clic otra vez. Los navegadores solo permiten reproducir audio tras interacción humana.");
+      }).catch(error => {
+        console.error("Error al reproducir:", error);
+        // Si falla por el nombre del archivo, lo dirá en la consola (F12)
+        alert("No se pudo iniciar la música. Revisa que el archivo se llame exactamente luz.mp3");
       });
+    }
   }
 };
-
-bgmusic.volume = .17;
 // Corazones flotantes
 function spawnHeart(x, y){
   const heart = document.createElement('div');
@@ -255,3 +255,4 @@ document.getElementById('whispers').style.display = 'none';
 createStars();
 animate();
 setInterval(spawnWhispers,10500);
+
