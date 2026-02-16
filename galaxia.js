@@ -33,7 +33,8 @@ const armSpread = Math.PI / arms;
 const starsTotal = dedications.length;
 let galaxyRotation = 0;
 let currentFilter = 'all'; 
-let zoom = 1.1; 
+
+let zoom = window.innerWidth < 600 ? 1.6 : 1.1;
 let center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 let isZooming = false; // Bandera para optimización de fluidez
 
@@ -263,6 +264,7 @@ function spawnWhispers() {
   }
 }
 setInterval(spawnWhispers, 12000);
+
 
 
 
