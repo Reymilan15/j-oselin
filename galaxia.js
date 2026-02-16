@@ -86,35 +86,52 @@ function focusOn(type) {
   const W = window.innerWidth;
   const H = window.innerHeight;
 
+  // Ajuste de Cámara y Zoom
   if (type === 'all') {
     zoom = 1.1;
     center = { x: W / 2, y: H / 2 };
   } else if (type === 'virgo') {
-    zoom = 2.0;
+    zoom = 1.9;
     const [vx, vy] = spiralGalaxyPos(5, zoom, galaxyRotation);
     center.x = W / 2 - (vx - center.x);
     center.y = H / 2 - (vy - center.y);
   } else if (type === 'aries') {
-    zoom = 2.3;
+    zoom = 2.1;
     const [ax, ay] = spiralGalaxyPos(16, zoom, galaxyRotation);
     center.x = W / 2 - (ax - center.x);
     center.y = H / 2 - (ay - center.y);
   }
 
+  // Brillo de Estrellas
   stars.forEach((star, i) => {
-    star.style.transition = "opacity 0.8s, transform 0.8s";
+    star.style.transition = "all 0.8s ease-in-out";
+    let isVirgoStar = (i <= 13);
+    let isAriesStar = (i >= 14 && i <= 22);
+
     if (type === 'all') {
       star.style.opacity = "1";
+      star.style.filter = "brightness(1)";
       star.style.transform = "scale(1)";
-    } else if (type === 'virgo' && i <= 12) {
-      star.style.opacity = "1";
-      star.style.transform = "scale(1.3)";
-    } else if (type === 'aries' && i >= 14 && i <= 19) {
-      star.style.opacity = "1";
-      star.style.transform = "scale(1.3)";
-    } else {
-      star.style.opacity = "0.15";
-      star.style.transform = "scale(0.8)";
+    } else if (type === 'virgo') {
+      if (isVirgoStar) {
+        star.style.opacity = "1";
+        star.style.filter = "brightness(2) drop-shadow(0 0 10px white)";
+        star.style.transform = "scale(1.5)";
+      } else {
+        star.style.opacity = "0.1"; // Se apagan las demás
+        star.style.filter = "grayscale(1) brightness(0.5)";
+        star.style.transform = "scale(0.7)";
+      }
+    } else if (type === 'aries') {
+      if (isAriesStar) {
+        star.style.opacity = "1";
+        star.style.filter = "brightness(2) drop-shadow(0 0 10px #ff8aae)";
+        star.style.transform = "scale(1.5)";
+      } else {
+        star.style.opacity = "0.1"; // Se apagan las demás
+        star.style.filter = "grayscale(1) brightness(0.5)";
+        star.style.transform = "scale(0.7)";
+      }
     }
   });
 }
@@ -122,22 +139,43 @@ function focusOn(type) {
 function drawConstellations(positions) {
   document.querySelectorAll('.const-line').forEach(l => l.remove());
   constellation.forEach(([idxA, idxB]) => {
+    if (positions[idxA] function drawConstellations(positions) {
+  document.querySelectorAll('.const-line').forEach(l => l.remove());
+  
+  constellation.forEach(([idxA, idxB]) => {
     if (positions[idxA] && positions[idxB]) {
-      // Filtrar líneas según la vista actual
       let isVirgo = (idxA <= 12 && idxB <= 12);
       let isAries = (idxA >= 14 && idxB <= 19);
       
-      if (currentFilter === 'all' || (currentFilter === 'virgo' && isVirgo) || (currentFilter === 'aries' && isAries)) {
+      // Lógica de visibilidad
+      let showLine = false;
+      let opacity = "0.3";
+      let strokeColor = "rgba(255, 255, 255, ";
+
+      if (currentFilter === 'all') {
+        showLine = true;
+        opacity = "0.4"; // Brillo medio para ambos en modo galaxia
+      } else if (currentFilter === 'virgo' && isVirgo) {
+        showLine = true;
+        opacity = "1"; // Brillo máximo para Virgo
+        strokeColor = "rgba(200, 230, 255, "; // Tono azulado sutil
+      } else if (currentFilter === 'aries' && isAries) {
+        showLine = true;
+        opacity = "1"; // Brillo máximo para Aries
+        strokeColor = "rgba(255, 200, 220, "; // Tono rosado sutil
+      }
+
+      if (showLine) {
         const [ax, ay] = positions[idxA];
         const [bx, by] = positions[idxB];
         const line = document.createElement('div');
         line.className = 'const-line';
         const w = Math.abs(ax - bx);
         const h = Math.abs(ay - by);
-        line.style.opacity = currentFilter === 'all' ? "0.3" : "0.8";
-        line.innerHTML = `<svg width="${w + 100}" height="${h + 100}" style="position:absolute;left:${Math.min(ax, bx)}px;top:${Math.min(ay, by)}px;pointer-events:none;">
+        
+        line.innerHTML = `<svg width="${w + 100}" height="${h + 100}" style="position:absolute;left:${Math.min(ax, bx)}px;top:${Math.min(ay, by)}px;pointer-events:none; filter: drop-shadow(0 0 5px white);">
           <line x1="${ax > bx ? w : 0}" y1="${ay > by ? h : 0}" x2="${ax < bx ? w : 0}" y2="${ay < by ? h : 0}" 
-          stroke="white" stroke-width="1.5" stroke-dasharray="5,5" />
+          stroke="${strokeColor}${opacity})" stroke-width="${currentFilter === 'all' ? '1.5' : '2.5'}" stroke-dasharray="${currentFilter === 'all' ? '5,5' : '0'}" />
         </svg>`;
         galaxy.appendChild(line);
       }
@@ -252,6 +290,7 @@ function spawnWhispers() {
 }
 
 setInterval(spawnWhispers, 12000);
+
 
 
 
