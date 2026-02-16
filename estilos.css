@@ -1,7 +1,7 @@
 body {
   margin: 0; padding: 0; overflow: hidden;
   font-family: 'Quicksand', Arial, sans-serif;
-  background: #0a001a; /* Un tono más oscuro para que resalten las estrellas */
+  background: #0a001a; 
 }
 
 #welcome {
@@ -9,14 +9,13 @@ body {
   display: flex; align-items: center; justify-content: center;
   background: radial-gradient(circle, rgba(20,7,44,0.95) 0%, rgba(5,0,15,0.98) 100%);
   animation: fadeIn 2s;
-  backdrop-filter: blur(8px); /* Efecto de desenfoque de fondo */
+  backdrop-filter: blur(8px);
 }
 
 .welcome-box {
   background: rgba(255,255,255,0.05);
   padding: 45px 50px;
   border-radius: 30px; text-align: center;
-  /* Glow más elegante */
   box-shadow: 0 0 50px rgba(150, 68, 253, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.05);
   color: #ffeceb;
   border: 1px solid rgba(200, 124, 226, 0.3);
@@ -64,13 +63,11 @@ body {
   border-radius: 50%;
   cursor: pointer;
   z-index: 10;
-  /* El secreto del realismo: múltiples capas de brillo */
   background: radial-gradient(circle, #fff 10%, rgba(255,255,255,0.8) 30%, transparent 70%);
   box-shadow: 0 0 10px #fff, 0 0 20px rgba(255,255,255,0.5);
   transition: transform 0.3s, filter 0.3s;
 }
 
-/* Efecto de destello (opcional) */
 .star::after {
   content: '';
   position: absolute;
@@ -78,11 +75,6 @@ body {
   width: 200%; height: 2px;
   background: rgba(255,255,255,0.2);
   transform: translate(-50%, -50%) rotate(45deg);
-}
-
-@keyframes twinkle {
-  0% { opacity: 0.6; transform: scale(0.9); filter: hue-rotate(0deg); }
-  100% { opacity: 1; transform: scale(1.1); filter: hue-rotate(20deg); }
 }
 
 .const-line {
@@ -96,7 +88,7 @@ body {
 .dedication {
   position: absolute;
   min-width: 280px; max-width: 360px;
-  background: rgba(15, 5, 25, 0.92); /* Glassmorphism oscuro */
+  background: rgba(15, 5, 25, 0.92);
   backdrop-filter: blur(12px);
   color: #ffeef6;
   border-radius: 25px;
@@ -109,30 +101,18 @@ body {
   animation: appear 0.5s cubic-bezier(.175, .885, .32, 1.275), drift 3s infinite alternate ease-in-out;
 }
 
-@keyframes appear { 
-  from { opacity: 0; transform: scale(0.5) translateY(20px); filter: blur(10px); } 
-  to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
-}
-
-@keyframes drift { 
-  0% { transform: translateY(0px); } 
-  100% { transform: translateY(-12px); } 
-}
-
 .dedication .close {
-  position: absolute; right: 15px; top: 12px; left: auto; /* Corregido a la derecha */
+  position: absolute; right: 15px; top: 12px;
   color: #ff8aae; font-size: 1.4em; cursor: pointer; opacity: .8;
   transition: all 0.3s ease;
 }
-
-.dedication .close:hover { transform: rotate(90deg); color: #fff; }
 
 #musicControl {
   position: fixed; top: 25px; right: 30px; z-index: 32;
 }
 
 #musicBtn {
-  font-family: 'Quicksand', sans-serif; /* Más moderno */
+  font-family: 'Quicksand', sans-serif;
   font-weight: bold;
   font-size: 0.9em; padding: 10px 22px;
   background: rgba(255, 255, 255, 0.1); 
@@ -143,12 +123,6 @@ body {
   transition: all 0.4s ease;
 }
 
-#musicBtn.on { 
-  background: #ff8aae; 
-  box-shadow: 0 0 20px rgba(255, 138, 174, 0.5);
-  border-color: transparent;
-}
-
 .heart {
   position: absolute;
   width: 30px; height: 28px;
@@ -156,30 +130,6 @@ body {
   animation: floatHeart 6s forwards ease-out;
   z-index: 10;
   filter: drop-shadow(0 0 8px rgba(255, 138, 174, 0.6));
-}
-
-@keyframes floatHeart {
-  0% { opacity: 0; transform: scale(0.5) rotate(0deg); }
-  20% { opacity: 1; transform: scale(1.2) rotate(15deg); }
-  100% { opacity: 0; transform: scale(1.5) translateY(-250px) rotate(-15deg); }
-}
-
-#zoomMessage {
-  position: fixed; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  color: #fff;
-  font-family: 'Pacifico',cursive;
-  font-size: 2.2em;
-  background: rgba(15, 5, 25, 0.85);
-  backdrop-filter: blur(15px);
-  padding: 40px 60px;
-  border-radius: 40px;
-  border: 1px solid rgba(187, 122, 231, 0.4);
-  box-shadow: 0 0 100px rgba(187, 122, 231, 0.4);
-  z-index: 100;
-  display:none;
-  text-align:center;
-  max-width:85vw;
 }
 
 .whisper {
@@ -192,72 +142,80 @@ body {
   text-shadow: 0 0 10px rgba(255, 141, 174, 0.5);
 }
 
+/* --- SECCIÓN RESPONSIVA CORREGIDA --- */
+@media (max-width: 768px) {
+  /* Caja de bienvenida más pequeña para que quepa en la pantalla */
+  .welcome-box { 
+    width: 90%; 
+    padding: 25px 20px; 
+    margin: 0 10px;
+  }
+  .welcome-box h1 { font-size: 1.8em; }
+  .welcome-box p { font-size: 1em; }
+
+  /* Controles de abajo: Más grandes y en cuadrícula para dedos */
+  #constellationControls {
+    position: fixed;
+    bottom: 40px; 
+    left: 0; width: 100%;
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: center;
+    gap: 12px;
+    padding: 0 15px;
+    z-index: 1000;
+  }
+
+  /* Los botones de Virgo, Aries, etc. */
+  .control-btn, .nav-btn {
+    padding: 15px 20px !important;
+    font-size: 15px !important;
+    min-width: 120px;
+    border-radius: 30px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    flex: 1 1 40%; /* Dos botones por fila aproximadamente */
+    max-width: 160px;
+  }
+
+  /* Botón de música arriba a la derecha */
+  #musicControl {
+    top: 15px;
+    right: 15px;
+  }
+  #musicBtn {
+    padding: 12px 18px;
+    font-size: 14px;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  /* Dedicatoria: Centrada y ancha para leer bien */
+  .dedication {
+    width: 85vw !important;
+    min-width: unset;
+    max-width: 320px;
+    left: 50% !important;
+    top: 40% !important;
+    transform: translate(-50%, -50%) !important;
+    font-size: 1.1em !important;
+    padding: 25px 20px !important;
+    line-height: 1.4;
+  }
+
+  /* Ajustar los susurros para que no se amontonen */
+  .whisper { font-size: 1em; }
+}
+
+/* Animaciones mantenidas */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes floatHeart {
+  0% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+  20% { opacity: 1; transform: scale(1.2) rotate(15deg); }
+  100% { opacity: 0; transform: scale(1.5) translateY(-250px) rotate(-15deg); }
+}
 @keyframes whisperMove {
   0% { opacity: 0; transform: translateY(50px); }
   10% { opacity: 0.4; }
   90% { opacity: 0.4; }
   100% { opacity: 0; transform: translateY(-350px) scale(1.1); }
 }
-
-/* Responsivo */
-@media (max-width: 600px) {
-  .welcome-box { width: 85%; padding: 30px; }
-  .welcome-box h1 { font-size: 1.8em; }
-  .dedication { min-width: 85vw; font-size: 1.1em; }
-  #zoomMessage { font-size: 1.3em; padding: 25px; }
-}
-.nav-btn {
-  font-family: 'Quicksand', sans-serif;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 8px 15px;
-  border-radius: 20px;
-  cursor: pointer;
-  backdrop-filter: blur(5px);
-  transition: all 0.3s;
-}
-.nav-btn:hover {
-  background: rgba(215, 110, 243, 0.4);
-  transform: translateX(-5px);
-}
-/* Ajustes para Teléfonos */
-@media (max-width: 768px) {
-  #constellationControls {
-    bottom: 20px;
-    flex-direction: row; /* Mantenerlos en fila o columna según prefieras */
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    padding: 0 10px;
-  }
-
-  .control-btn {
-    padding: 12px 18px; /* Más área de contacto */
-    font-size: 14px;    /* Letra más legible */
-    min-width: 100px;
-    flex: 1 1 auto;     /* Permite que crezcan un poco */
-  }
-
-  #musicControl {
-    top: 15px;
-    right: 15px;
-  }
-
-  #musicBtn {
-    padding: 10px 15px;
-    font-size: 14px;
-  }
-
-  /* La dedicatoria que sale al tocar estrellas */
-  #dedication {
-    width: 80% !important; /* Que no se salga de la pantalla */
-    max-width: 280px;
-    font-size: 16px !important;
-    padding: 15px !important;
-    line-height: 1.4;
-  }
-}
-
-
