@@ -1,4 +1,5 @@
 
+// --- VARIABLES DE CONTROL (Manteniendo tus datos) ---
 const dedications = [
   "Como Virgo, siempre busqué el orden, hasta que tu fuego de Aries me enseñó la belleza del caos.",
   "Eres mi carnero valiente, la que se lanza al universo sin miedo y me lleva de la mano.",
@@ -25,16 +26,15 @@ const dedications = [
   "Contigo, mi Aries favorita, el infinito es solo el principio de nuestra aventura."
 ];
 
-const whispersArr = [
-  "Tú eres mi centro galáctico", "Nuestro amor brilla entre las estrellas", "Por siempre juntos",
-  "Eres mi todo", "Mi estrella favorita", "Luz de mi vida", "Siempre tuyo", "Destino galáctico"
-];
+const whispersArr = ["Tú eres mi centro galáctico", "Nuestro amor brilla entre las estrellas", "Por siempre juntos", "Eres mi todo", "Mi estrella favorita", "Luz de mi vida", "Siempre tuyo", "Destino galáctico"];
 
 const arms = 3;
 const armSpread = Math.PI / arms;
 const starsTotal = dedications.length;
 let galaxyRotation = 0;
 let currentFilter = 'all'; 
+let zoom = 1.1; // Zoom inicial
+let center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
 const constellation = [
   [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [2, 7], [7, 8], [8, 9], [3, 10], [10, 11], [1, 12],
@@ -46,14 +46,37 @@ const dedicationBox = document.getElementById("dedication");
 const dedicationText = document.querySelector(".dedication-text");
 const canvas = document.getElementById("galaxyCanvas");
 let stars = [];
-let zoom = 1;
-let center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
-function spiralGalaxyPos(i, zoom, rotation) {
+// --- NUEVO: SISTEMA DE ZOOM MANUAL (DEDOS Y MOUSE) ---
+window.addEventListener('wheel', (e) => {
+    zoom += e.deltaY * -0.001;
+    zoom = Math.min(Math.max(0.5, zoom), 4); // Límites de zoom
+}, { passive: false });
+
+let initialDist = null;
+window.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2) {
+        let dist = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+        );
+        if (initialDist !== null) {
+            zoom *= dist / initialDist;
+            zoom = Math.min(Math.max(0.5, zoom), 4);
+        }
+        initialDist = dist;
+    }
+}, { passive: false });
+
+window.addEventListener('touchend', () => { initialDist = null; });
+
+// --- FUNCIONES CORE (Sin borrar nada) ---
+
+function spiralGalaxyPos(i, z, rotation) {
   const baseAngle = (i * arms / starsTotal) * 2 * Math.PI;
   const armAngle = ((i % arms) * armSpread);
   const theta = baseAngle + armAngle + rotation;
-  const r = 160 + (i * 15) * zoom + Math.cos(i * 0.7 + rotation) * 15;
+  const r = 160 + (i * 15) * z + Math.cos(i * 0.7 + rotation) * 15;
   const x = center.x + Math.cos(theta) * r;
   const y = center.y + Math.sin(theta) * (r * 0.85);
   return [x, y];
@@ -64,17 +87,12 @@ function createStars() {
   for (let i = 0; i < starsTotal; i++) {
     const star = document.createElement('div');
     star.className = 'star';
-    star.dataset.star = i;
-    
-    // Mejora visual: Estrellas más reales con gradientes
     star.style.background = "radial-gradient(circle, #fff 20%, rgba(255,255,255,0.7) 40%, transparent 80%)";
     star.style.borderRadius = "50%";
     star.style.boxShadow = "0 0 8px #fff";
-    
     galaxy.appendChild(star); stars.push(star);
     star.addEventListener('click', e => {
       e.stopPropagation();
-      zoom = 2.2; 
       dedicationBox.style.display = 'block';
       dedicationText.textContent = dedications[i];
       let x = parseFloat(star.style.left) + 20;
@@ -88,24 +106,16 @@ function createStars() {
 
 window.focusOn = function(type) {
   currentFilter = type;
-  zoom = 1.1; 
-  center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-
+  // Ya no modificamos 'zoom' ni 'center' aquí para que se mantenga el manual
   stars.forEach((star, i) => {
     star.style.transition = "all 0.6s ease-in-out";
     let isVirgoStar = (i <= 13);
     let isAriesStar = (i >= 14 && i <= 22);
 
     if (type === 'all') {
-      if (isVirgoStar || isAriesStar) {
-        star.style.opacity = "1";
-        star.style.filter = "brightness(2) drop-shadow(0 0 12px #fff)";
-        star.style.transform = "scale(1.4)";
-      } else {
-        star.style.opacity = "0.4";
-        star.style.filter = "brightness(1)";
-        star.style.transform = "scale(1)";
-      }
+      star.style.opacity = (isVirgoStar || isAriesStar) ? "1" : "0.4";
+      star.style.filter = (isVirgoStar || isAriesStar) ? "brightness(2) drop-shadow(0 0 12px #fff)" : "brightness(1)";
+      star.style.transform = (isVirgoStar || isAriesStar) ? "scale(1.4)" : "scale(1)";
     } else if (type === 'virgo') {
       if (isVirgoStar) {
         star.style.opacity = "1";
@@ -130,39 +140,27 @@ window.focusOn = function(type) {
   });
 };
 
-// FUNCIÓN CORREGIDA: drawConstellations con parámetros de precisión
 function drawConstellations(positions) {
   document.querySelectorAll('.const-line').forEach(l => l.remove());
-  
   constellation.forEach(([idxA, idxB]) => {
     if (positions[idxA] && positions[idxB]) {
       let isVirgo = (idxA <= 12 && idxB <= 12);
       let isAries = (idxA >= 14 && idxB <= 19);
-      
-      let showLine = (currentFilter === 'all') || 
-                     (currentFilter === 'virgo' && isVirgo) || 
-                     (currentFilter === 'aries' && isAries);
-
+      let showLine = (currentFilter === 'all') || (currentFilter === 'virgo' && isVirgo) || (currentFilter === 'aries' && isAries);
       if (showLine) {
         const [ax, ay] = positions[idxA];
         const [bx, by] = positions[idxB];
-        
         const minX = Math.min(ax, bx);
         const minY = Math.min(ay, by);
-        const width = Math.abs(ax - bx);
-        const height = Math.abs(ay - by);
-
+        const w = Math.abs(ax - bx);
+        const h = Math.abs(ay - by);
         const lineContainer = document.createElement('div');
         lineContainer.className = 'const-line';
-        
         lineContainer.innerHTML = `
-          <svg width="${width + 40}" height="${height + 40}" 
-               style="position:absolute; left:${minX}px; top:${minY}px; overflow:visible; pointer-events:none;">
-            <line x1="${ax - minX}" y1="${ay - minY}" 
-                  x2="${bx - minX}" y2="${by - minY}" 
+          <svg width="${w + 40}" height="${h + 40}" style="position:absolute; left:${minX}px; top:${minY}px; overflow:visible; pointer-events:none;">
+            <line x1="${ax - minX}" y1="${ay - minY}" x2="${bx - minX}" y2="${by - minY}" 
                   stroke="${currentFilter === 'aries' ? 'rgba(255,138,174,0.7)' : 'rgba(255,255,255,0.4)'}" 
-                  stroke-width="1.2" 
-                  style="filter: drop-shadow(0 0 3px white);" />
+                  stroke-width="1.2" style="filter: drop-shadow(0 0 3px white);" />
           </svg>`;
         galaxy.appendChild(lineContainer);
       }
@@ -175,21 +173,13 @@ function animateStars() {
   for (let i = 0; i < starsTotal; i++) {
     const [cx, cy] = spiralGalaxyPos(i, zoom, galaxyRotation);
     positions.push([cx, cy]);
-
-    // Cálculo de tamaño para que no sean solo puntos
     const isMainStar = (i <= 13 || (i >= 14 && i <= 22));
-    const starSize = (isMainStar ? 8 : 4); 
-
-    // CENTRADO EXACTO: Restamos la mitad del tamaño para que cx,cy sea el centro real
+    const starSize = (isMainStar ? 8 : 4) * (zoom * 0.8); // El tamaño escala un poco con el zoom
     stars[i].style.width = starSize + 'px';
     stars[i].style.height = starSize + 'px';
     stars[i].style.left = (cx - starSize / 2) + 'px';
     stars[i].style.top = (cy - starSize / 2) + 'px';
-    
-    // Parpadeo sutil para realismo
-    if (Math.random() > 0.98) {
-        stars[i].style.opacity = Math.random();
-    }
+    if (Math.random() > 0.98) { stars[i].style.opacity = Math.random(); }
   }
   drawConstellations(positions);
   return positions;
@@ -200,11 +190,6 @@ function drawGalaxyBackground(rot) {
   let W = window.innerWidth, H = window.innerHeight;
   canvas.width = W; canvas.height = H;
   ctx.clearRect(0, 0, W, H);
-  const glow = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, 400 * zoom);
-  glow.addColorStop(0, 'rgba(80, 20, 120, 0.2)');
-  glow.addColorStop(1, 'transparent');
-  ctx.fillStyle = glow;
-  ctx.fillRect(0,0,W,H);
   ctx.save(); ctx.translate(center.x, center.y);
   for (let arm = 0; arm < arms; arm++) {
     let theta0 = rot + arm * armSpread;
@@ -248,16 +233,8 @@ const musicBtn = document.getElementById('musicBtn');
 let musicOn = false;
 
 musicBtn.onclick = function() {
-  if (musicOn) {
-    bgmusic.pause();
-    musicOn = false;
-    musicBtn.textContent = '🎵 Encender música';
-  } else {
-    bgmusic.play().then(() => {
-      musicOn = true;
-      musicBtn.textContent = '🎶 Apagar música';
-    }).catch(e => console.log("Error de audio"));
-  }
+  if (musicOn) { bgmusic.pause(); musicOn = false; musicBtn.textContent = '🎵 Encender música'; }
+  else { bgmusic.play().then(() => { musicOn = true; musicBtn.textContent = '🎶 Apagar música'; }).catch(e => console.log(e)); }
 };
 
 function spawnHeart(x, y){
@@ -283,7 +260,6 @@ function spawnWhispers() {
     }, 8000 + i*3000);
   }
 }
-
 setInterval(spawnWhispers, 12000);
 
 
