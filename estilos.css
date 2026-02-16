@@ -221,5 +221,43 @@ body {
   background: rgba(215, 110, 243, 0.4);
   transform: translateX(-5px);
 }
+/* Ajustes para Teléfonos */
+@media (max-width: 768px) {
+  #constellationControls {
+    bottom: 20px;
+    flex-direction: row; /* Mantenerlos en fila o columna según prefieras */
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .control-btn {
+    padding: 12px 18px; /* Más área de contacto */
+    font-size: 14px;    /* Letra más legible */
+    min-width: 100px;
+    flex: 1 1 auto;     /* Permite que crezcan un poco */
+  }
+
+  #musicControl {
+    top: 15px;
+    right: 15px;
+  }
+
+  #musicBtn {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+
+  /* La dedicatoria que sale al tocar estrellas */
+  #dedication {
+    width: 80% !important; /* Que no se salga de la pantalla */
+    max-width: 280px;
+    font-size: 16px !important;
+    padding: 15px !important;
+    line-height: 1.4;
+  }
+}
 
 
