@@ -1,16 +1,4 @@
 
-Para mejorar la fluidez en el móvil sin perder ninguna funcionalidad, he aplicado tres cambios técnicos clave al código que me pasaste:
-
-Aceleración por GPU: He cambiado style.left y top por translate3d, lo que obliga al teléfono a procesar el movimiento con el chip de video.
-
-Bandera de optimización (isZooming): Mientras tus dedos se mueven, el código deja de dibujar las líneas SVG temporalmente para que el zoom sea instantáneo. Reaparecen al soltar.
-
-Gestión de capas: He añadido will-change para que el navegador esté listo para mover las estrellas rápidamente.
-
-Aquí tienes el código completo, listo para copiar y reemplazar en tu galaxia.js:
-
-JavaScript
-
 // --- VARIABLES DE CONTROL (Manteniendo tus datos) ---
 const dedications = [
   "Como Virgo, siempre busqué el orden, hasta que tu fuego de Aries me enseñó la belleza del caos.",
@@ -275,6 +263,7 @@ function spawnWhispers() {
   }
 }
 setInterval(spawnWhispers, 12000);
+
 
 
 
