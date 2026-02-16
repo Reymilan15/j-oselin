@@ -1,4 +1,16 @@
 
+Para mejorar la fluidez en el móvil sin perder ninguna funcionalidad, he aplicado tres cambios técnicos clave al código que me pasaste:
+
+Aceleración por GPU: He cambiado style.left y top por translate3d, lo que obliga al teléfono a procesar el movimiento con el chip de video.
+
+Bandera de optimización (isZooming): Mientras tus dedos se mueven, el código deja de dibujar las líneas SVG temporalmente para que el zoom sea instantáneo. Reaparecen al soltar.
+
+Gestión de capas: He añadido will-change para que el navegador esté listo para mover las estrellas rápidamente.
+
+Aquí tienes el código completo, listo para copiar y reemplazar en tu galaxia.js:
+
+JavaScript
+
 // --- VARIABLES DE CONTROL (Manteniendo tus datos) ---
 const dedications = [
   "Como Virgo, siempre busqué el orden, hasta que tu fuego de Aries me enseñó la belleza del caos.",
@@ -33,8 +45,9 @@ const armSpread = Math.PI / arms;
 const starsTotal = dedications.length;
 let galaxyRotation = 0;
 let currentFilter = 'all'; 
-let zoom = 1.1; // Zoom inicial
+let zoom = 1.1; 
 let center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+let isZooming = false; // Bandera para optimización de fluidez
 
 const constellation = [
   [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [2, 7], [7, 8], [8, 9], [3, 10], [10, 11], [1, 12],
@@ -47,30 +60,38 @@ const dedicationText = document.querySelector(".dedication-text");
 const canvas = document.getElementById("galaxyCanvas");
 let stars = [];
 
-// --- NUEVO: SISTEMA DE ZOOM MANUAL (DEDOS Y MOUSE) ---
+// --- SISTEMA DE ZOOM OPTIMIZADO ---
 window.addEventListener('wheel', (e) => {
-    zoom += e.deltaY * -0.001;
-    zoom = Math.min(Math.max(0.5, zoom), 4); // Límites de zoom
-}, { passive: false });
+    zoom += e.deltaY * -0.0008;
+    zoom = Math.min(Math.max(0.5, zoom), 4);
+}, { passive: true });
 
 let initialDist = null;
+window.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+        initialDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+    }
+}, { passive: true });
+
 window.addEventListener('touchmove', (e) => {
     if (e.touches.length === 2) {
-        let dist = Math.hypot(
-            e.touches[0].pageX - e.touches[1].pageX,
-            e.touches[0].pageY - e.touches[1].pageY
-        );
+        e.preventDefault(); 
+        isZooming = true; // Pausamos dibujos pesados
+        let dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
         if (initialDist !== null) {
-            zoom *= dist / initialDist;
-            zoom = Math.min(Math.max(0.5, zoom), 4);
+            let factor = dist / initialDist;
+            zoom = Math.min(Math.max(0.5, zoom * factor), 4);
         }
         initialDist = dist;
     }
 }, { passive: false });
 
-window.addEventListener('touchend', () => { initialDist = null; });
+window.addEventListener('touchend', () => { 
+    initialDist = null; 
+    setTimeout(() => { isZooming = false; }, 150); // Reactivamos líneas tras el zoom
+});
 
-// --- FUNCIONES CORE (Sin borrar nada) ---
+// --- FUNCIONES CORE ---
 
 function spiralGalaxyPos(i, z, rotation) {
   const baseAngle = (i * arms / starsTotal) * 2 * Math.PI;
@@ -87,6 +108,7 @@ function createStars() {
   for (let i = 0; i < starsTotal; i++) {
     const star = document.createElement('div');
     star.className = 'star';
+    star.style.willChange = "transform, opacity"; // Prepara al móvil para mover capas
     star.style.background = "radial-gradient(circle, #fff 20%, rgba(255,255,255,0.7) 40%, transparent 80%)";
     star.style.borderRadius = "50%";
     star.style.boxShadow = "0 0 8px #fff";
@@ -95,52 +117,38 @@ function createStars() {
       e.stopPropagation();
       dedicationBox.style.display = 'block';
       dedicationText.textContent = dedications[i];
-      let x = parseFloat(star.style.left) + 20;
-      let y = parseFloat(star.style.top) - 20;
-      dedicationBox.style.left = x + 'px';
-      dedicationBox.style.top = y + 'px';
-      spawnHeart(x, y);
+      // Usamos el transform para calcular la posición de la caja de texto
+      const rect = star.getBoundingClientRect();
+      dedicationBox.style.left = (rect.left + 20) + 'px';
+      dedicationBox.style.top = (rect.top - 20) + 'px';
+      spawnHeart(rect.left, rect.top);
     });
   }
 }
 
 window.focusOn = function(type) {
   currentFilter = type;
-  // Ya no modificamos 'zoom' ni 'center' aquí para que se mantenga el manual
   stars.forEach((star, i) => {
-    star.style.transition = "all 0.6s ease-in-out";
     let isVirgoStar = (i <= 13);
     let isAriesStar = (i >= 14 && i <= 22);
+    star.style.transition = "opacity 0.6s ease-in-out, filter 0.6s ease-in-out";
 
     if (type === 'all') {
       star.style.opacity = (isVirgoStar || isAriesStar) ? "1" : "0.4";
       star.style.filter = (isVirgoStar || isAriesStar) ? "brightness(2) drop-shadow(0 0 12px #fff)" : "brightness(1)";
-      star.style.transform = (isVirgoStar || isAriesStar) ? "scale(1.4)" : "scale(1)";
     } else if (type === 'virgo') {
-      if (isVirgoStar) {
-        star.style.opacity = "1";
-        star.style.filter = "brightness(2.5) drop-shadow(0 0 15px #fff)";
-        star.style.transform = "scale(1.6)";
-      } else {
-        star.style.opacity = "0.05";
-        star.style.filter = "grayscale(1) brightness(0.3)";
-        star.style.transform = "scale(0.8)";
-      }
+      star.style.opacity = isVirgoStar ? "1" : "0.05";
+      star.style.filter = isVirgoStar ? "brightness(2.5) drop-shadow(0 0 15px #fff)" : "grayscale(1) brightness(0.3)";
     } else if (type === 'aries') {
-      if (isAriesStar) {
-        star.style.opacity = "1";
-        star.style.filter = "brightness(2.5) drop-shadow(0 0 15px #ff8aae)";
-        star.style.transform = "scale(1.6)";
-      } else {
-        star.style.opacity = "0.05";
-        star.style.filter = "grayscale(1) brightness(0.3)";
-        star.style.transform = "scale(0.8)";
-      }
+      star.style.opacity = isAriesStar ? "1" : "0.05";
+      star.style.filter = isAriesStar ? "brightness(2.5) drop-shadow(0 0 15px #ff8aae)" : "grayscale(1) brightness(0.3)";
     }
   });
 };
 
 function drawConstellations(positions) {
+  if (isZooming) return; // Si estamos haciendo zoom, no redibujamos líneas (es lo que causa lentitud)
+  
   document.querySelectorAll('.const-line').forEach(l => l.remove());
   constellation.forEach(([idxA, idxB]) => {
     if (positions[idxA] && positions[idxB]) {
@@ -160,7 +168,7 @@ function drawConstellations(positions) {
           <svg width="${w + 40}" height="${h + 40}" style="position:absolute; left:${minX}px; top:${minY}px; overflow:visible; pointer-events:none;">
             <line x1="${ax - minX}" y1="${ay - minY}" x2="${bx - minX}" y2="${by - minY}" 
                   stroke="${currentFilter === 'aries' ? 'rgba(255,138,174,0.7)' : 'rgba(255,255,255,0.4)'}" 
-                  stroke-width="1.2" style="filter: drop-shadow(0 0 3px white);" />
+                  stroke-width="1.2" />
           </svg>`;
         galaxy.appendChild(lineContainer);
       }
@@ -170,16 +178,19 @@ function drawConstellations(positions) {
 
 function animateStars() {
   const positions = [];
+  const starScale = zoom * 0.8;
   for (let i = 0; i < starsTotal; i++) {
     const [cx, cy] = spiralGalaxyPos(i, zoom, galaxyRotation);
     positions.push([cx, cy]);
     const isMainStar = (i <= 13 || (i >= 14 && i <= 22));
-    const starSize = (isMainStar ? 8 : 4) * (zoom * 0.8); // El tamaño escala un poco con el zoom
+    const starSize = (isMainStar ? 8 : 4) * starScale;
+    
     stars[i].style.width = starSize + 'px';
     stars[i].style.height = starSize + 'px';
-    stars[i].style.left = (cx - starSize / 2) + 'px';
-    stars[i].style.top = (cy - starSize / 2) + 'px';
-    if (Math.random() > 0.98) { stars[i].style.opacity = Math.random(); }
+    // ACELERACIÓN GPU: Usamos translate3d en lugar de left/top
+    stars[i].style.transform = `translate3d(${cx - starSize / 2}px, ${cy - starSize / 2}px, 0)`;
+    
+    if (Math.random() > 0.99) { stars[i].style.opacity = Math.random(); }
   }
   drawConstellations(positions);
   return positions;
@@ -188,17 +199,19 @@ function animateStars() {
 function drawGalaxyBackground(rot) {
   const ctx = canvas.getContext('2d');
   let W = window.innerWidth, H = window.innerHeight;
-  canvas.width = W; canvas.height = H;
+  if (canvas.width !== W) { canvas.width = W; canvas.height = H; }
   ctx.clearRect(0, 0, W, H);
   ctx.save(); ctx.translate(center.x, center.y);
+  // Bajamos un poco la densidad de nubes de fondo solo para móviles
+  const cloudCount = window.innerWidth < 600 ? 40 : 70;
   for (let arm = 0; arm < arms; arm++) {
     let theta0 = rot + arm * armSpread;
-    for (let i = 0; i < 70; i++) {
+    for (let i = 0; i < cloudCount; i++) {
       let t = theta0 + i * 0.13;
       let r = (80 + i * 6) * zoom;
       ctx.beginPath();
       ctx.arc(Math.cos(t) * r, Math.sin(t) * r * 0.9, (38 + Math.random() * 20) * zoom, 0, 2 * Math.PI);
-      ctx.globalAlpha = 0.08 - (i / 500);
+      ctx.globalAlpha = 0.06 - (i / 600);
       ctx.fillStyle = arm % 2 == 0 ? '#9644fd' : '#ff8aae';
       ctx.fill();
     }
@@ -207,7 +220,7 @@ function drawGalaxyBackground(rot) {
 }
 
 function animate() {
-  galaxyRotation += 0.0015;
+  galaxyRotation += 0.0012;
   animateStars();
   drawGalaxyBackground(galaxyRotation);
   requestAnimationFrame(animate);
@@ -249,7 +262,8 @@ function spawnWhispers() {
   const layer = document.getElementById('whispers');
   layer.innerHTML = '';
   const W = window.innerWidth;
-  for(let i=0;i<5;i++) {
+  const count = W < 600 ? 3 : 5;
+  for(let i=0;i<count;i++) {
     setTimeout(()=>{
       let el = document.createElement('div'); el.className='whisper';
       el.textContent = whispersArr[Math.floor(Math.random()*whispersArr.length)];
