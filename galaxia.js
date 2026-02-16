@@ -1,10 +1,3 @@
-Entiendo perfectamente. El error Unexpected token '}' que te aparecía es porque en el código que me pasaste la función drawConstellations no estaba declarada (faltaba el inicio function drawConstellations(positions) {) y el bucle interno estaba suelto.
-
-He corregido eso y he aplicado las mejoras de realismo y precisión que pediste: ahora las líneas nacen exactamente del centro de las estrellas y las estrellas tienen un aspecto mucho más natural.
-
-Aquí tienes el código completo y corregido. Copia y pega todo esto en tu archivo galaxia.js:
-
-JavaScript
 
 const dedications = [
   "Como Virgo, siempre busqué el orden, hasta que tu fuego de Aries me enseñó la belleza del caos.",
@@ -292,6 +285,7 @@ function spawnWhispers() {
 }
 
 setInterval(spawnWhispers, 12000);
+
 
 
 
