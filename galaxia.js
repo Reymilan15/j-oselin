@@ -1,3 +1,11 @@
+El error principal que tenías era de sintaxis (código mal pegado). Justo antes de la función drawConstellations, se había repetido el nombre de la función a mitad de una condición, lo que rompe todo el archivo JavaScript.
+
+He limpiado ese error y he asegurado que la función focusOn sea accesible globalmente para que tus botones de HTML no den error de undefined.
+
+Aquí tienes el código corregido y funcional:
+
+JavaScript
+
 const dedications = [
   "Como Virgo, siempre busqué el orden, hasta que tu fuego de Aries me enseñó la belleza del caos.",
   "Eres mi carnero valiente, la que se lanza al universo sin miedo y me lleva de la mano.",
@@ -33,9 +41,8 @@ const arms = 3;
 const armSpread = Math.PI / arms;
 const starsTotal = dedications.length;
 let galaxyRotation = 0;
-let currentFilter = 'all'; // Variable para el filtro
+let currentFilter = 'all'; 
 
-// MAPA DE CONEXIONES: Virgo (0-12) y Aries (14-19)
 const constellation = [
   [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [2, 7], [7, 8], [8, 9], [3, 10], [10, 11], [1, 12],
   [14, 15], [15, 16], [16, 17], [17, 18], [18, 19]
@@ -80,13 +87,12 @@ function createStars() {
   }
 }
 
-// Función para enfocar constelaciones (Mueve la cámara y resalta)
-function focusOn(type) {
+// Función global para los botones
+window.focusOn = function(type) {
   currentFilter = type;
   const W = window.innerWidth;
   const H = window.innerHeight;
 
-  // Ajuste de Cámara y Zoom
   if (type === 'all') {
     zoom = 1.1;
     center = { x: W / 2, y: H / 2 };
@@ -102,7 +108,6 @@ function focusOn(type) {
     center.y = H / 2 - (ay - center.y);
   }
 
-  // Brillo de Estrellas
   stars.forEach((star, i) => {
     star.style.transition = "all 0.8s ease-in-out";
     let isVirgoStar = (i <= 13);
@@ -118,7 +123,7 @@ function focusOn(type) {
         star.style.filter = "brightness(2) drop-shadow(0 0 10px white)";
         star.style.transform = "scale(1.5)";
       } else {
-        star.style.opacity = "0.1"; // Se apagan las demás
+        star.style.opacity = "0.1";
         star.style.filter = "grayscale(1) brightness(0.5)";
         star.style.transform = "scale(0.7)";
       }
@@ -128,18 +133,15 @@ function focusOn(type) {
         star.style.filter = "brightness(2) drop-shadow(0 0 10px #ff8aae)";
         star.style.transform = "scale(1.5)";
       } else {
-        star.style.opacity = "0.1"; // Se apagan las demás
+        star.style.opacity = "0.1";
         star.style.filter = "grayscale(1) brightness(0.5)";
         star.style.transform = "scale(0.7)";
       }
     }
   });
-}
+};
 
 function drawConstellations(positions) {
-  document.querySelectorAll('.const-line').forEach(l => l.remove());
-  constellation.forEach(([idxA, idxB]) => {
-    if (positions[idxA] function drawConstellations(positions) {
   document.querySelectorAll('.const-line').forEach(l => l.remove());
   
   constellation.forEach(([idxA, idxB]) => {
@@ -147,22 +149,21 @@ function drawConstellations(positions) {
       let isVirgo = (idxA <= 12 && idxB <= 12);
       let isAries = (idxA >= 14 && idxB <= 19);
       
-      // Lógica de visibilidad
       let showLine = false;
       let opacity = "0.3";
       let strokeColor = "rgba(255, 255, 255, ";
 
       if (currentFilter === 'all') {
         showLine = true;
-        opacity = "0.4"; // Brillo medio para ambos en modo galaxia
+        opacity = "0.4";
       } else if (currentFilter === 'virgo' && isVirgo) {
         showLine = true;
-        opacity = "1"; // Brillo máximo para Virgo
-        strokeColor = "rgba(200, 230, 255, "; // Tono azulado sutil
+        opacity = "1";
+        strokeColor = "rgba(200, 230, 255, ";
       } else if (currentFilter === 'aries' && isAries) {
         showLine = true;
-        opacity = "1"; // Brillo máximo para Aries
-        strokeColor = "rgba(255, 200, 220, "; // Tono rosado sutil
+        opacity = "1";
+        strokeColor = "rgba(255, 200, 220, ";
       }
 
       if (showLine) {
@@ -231,7 +232,6 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-// --- Soporte para botones y entrada ---
 document.getElementById('enterBtn').onclick = function() {
   document.getElementById('welcome').style.display = 'none';
   document.getElementById('galaxy').style.display = 'block';
@@ -243,7 +243,6 @@ document.getElementById('enterBtn').onclick = function() {
   animate();
 };
 
-// --- Mantenimiento de tus funciones originales ---
 window.addEventListener('resize', () => {
   center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 });
@@ -261,7 +260,7 @@ musicBtn.onclick = function() {
     bgmusic.play().then(() => {
       musicOn = true;
       musicBtn.textContent = '🎶 Apagar música';
-    });
+    }).catch(e => console.log("Error de audio"));
   }
 };
 
@@ -290,6 +289,7 @@ function spawnWhispers() {
 }
 
 setInterval(spawnWhispers, 12000);
+
 
 
 
