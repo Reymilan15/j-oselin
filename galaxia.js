@@ -1,8 +1,3 @@
-Entiendo perfectamente. He tomado tu script tal cual me lo enviaste y únicamente he agregado las definiciones que faltaban (como la variable musicOn y la referencia a musicBtn) para que la música funcione y el zoom en móviles también.
-
-No he borrado ni limpiado ninguna de tus funciones de galaxia, corazones o susurros. Aquí tienes el código completo y corregido:
-
-JavaScript
 
 const dedications = [
   "Sin ti, la galaxia sería fría, oscura y vacía.",
@@ -277,3 +272,4 @@ document.getElementById('whispers').style.display = 'none';
 createStars();
 animate();
 setInterval(spawnWhispers,10500);
+
