@@ -263,7 +263,72 @@ function spawnWhispers() {
     }, 8000 + i*3000);
   }
 }
+// Variable para el filtro
+let currentFilter = 'all';
+
+// Función para enfocar constelaciones
+function focusConstellation(type) {
+  currentFilter = type;
+  
+  // Ajustar zoom automáticamente según la constelación
+  if(type === 'all') zoom = 1.1;
+  else zoom = 1.8;
+
+  stars.forEach((star, i) => {
+    star.style.transition = "opacity 0.8s, transform 0.8s";
+    
+    if (type === 'all') {
+      star.style.opacity = "1";
+      star.style.transform = "scale(1)";
+    } else if (type === 'virgo' && i <= 12) {
+      star.style.opacity = "1";
+      star.style.transform = "scale(1.5)";
+      star.style.boxShadow = "0 0 20px #fff";
+    } else if (type === 'aries' && i >= 14 && i <= 19) {
+      star.style.opacity = "1";
+      star.style.transform = "scale(1.5)";
+      star.style.boxShadow = "0 0 20px #ff8aae";
+    } else {
+      star.style.opacity = "0.15"; // Opaca las que no pertenecen
+      star.style.transform = "scale(0.8)";
+    }
+  });
+}
+
+// Actualiza tu botón de entrar para mostrar los nuevos controles
+document.getElementById('enterBtn').onclick = function() {
+  document.getElementById('welcome').style.display = 'none';
+  document.getElementById('galaxy').style.display = 'block';
+  document.getElementById('musicControl').style.display = 'block';
+  document.getElementById('constellationControls').style.display = 'flex'; // Muestra los botones
+  canvas.style.display = 'block';
+  document.getElementById('whispers').style.display = 'block';
+  createStars();
+  animate();
+};
+
+// Modifica ligeramente drawConstellations para que respete el filtro
+function drawConstellations(positions) {
+  document.querySelectorAll('.const-line').forEach(l => l.remove());
+  
+  constellation.forEach(([idxA, idxB]) => {
+    // Solo dibujar si ambas estrellas están en el filtro actual
+    let isVirgo = (idxA <= 12 && idxB <= 12);
+    let isAries = (idxA >= 14 && idxB >= 19); // Ajustado según tus índices
+
+    if (currentFilter === 'all' || (currentFilter === 'virgo' && isVirgo) || (currentFilter === 'aries' && isAries)) {
+        // ... aquí va tu código existente de crear el SVG de la línea ...
+        // (No lo pego todo para no saturar, pero mantén tu lógica de línea punteada)
+        const line = document.createElement('div');
+        line.className = 'const-line';
+        line.style.opacity = currentFilter === 'all' ? "0.2" : "1"; // Brilla más si está enfocada
+        // ... resto del SVG ...
+        galaxy.appendChild(line);
+    }
+  });
+}
 
 createStars();
 animate();
 setInterval(spawnWhispers, 12000);
+
