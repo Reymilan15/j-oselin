@@ -1,18 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Nuestra galaxia de amor ✨</title>
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="estilos.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
- 
-</head>
-<body>
-  <div id="welcome">
+<div id="welcome">
     <div class="welcome-box">
       <h1>Mi amor... <br>¡Esta galaxia es para ti!</h1>
       <p>Eres mi estrella eterna, la que da sentido y luz a todo mi universo.<br>
@@ -20,23 +6,30 @@
       <button id="enterBtn">Abrir nuestro universo ✨</button>
     </div>
   </div>
+
   <canvas id="galaxyCanvas"></canvas>
   <div id="galaxy" style="display:none"></div>
+
   <div id="dedication" class="dedication" style="display: none;">
-    <span class="close">&times;</span>
+    <span class="close" onclick="this.parentElement.style.display='none'">&times;</span>
     <span class="dedication-text"></span>
   </div>
+
   <div id="zoomMessage">Sin ti todo sería una galaxia fría y oscura...</div>
- <div id="musicControl">
-<div id="constellationControls" style="position: fixed; top: 80px; right: 30px; z-index: 32; display: flex; flex-direction: column; gap: 10px;">
-  <button onclick="focusOn('virgo')">✨ Ver Virgo (Yo)</button>
-  <button onclick="focusOn('aries')">♈ Ver Aries (Ella)</button>
-  <button onclick="focusOn('all')">🌌 Ver Galaxia</button>
-</div>
- <audio id="bgmusic" src="luz.mp3" loop></audio>
+
+  <div id="musicControl" style="display:none;">
+    <audio id="bgmusic" src="luz.mp3" loop></audio>
     <button id="musicBtn">🎵 Encender música</button>
   </div>
+
+  <div id="constellationControls" style="display:none;">
+    <button class="nav-btn" onclick="focusOn('virgo')">✨ Ver Virgo (Yo)</button>
+    <button class="nav-btn" onclick="focusOn('aries')">♈ Ver Aries (Ella)</button>
+    <button class="nav-btn" onclick="focusOn('all')">🌌 Ver Galaxia</button>
+  </div>
+
   <div id="whispers"></div>
+
   <script src="galaxia.js"></script>
 </body>
 </html>
