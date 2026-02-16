@@ -1,6 +1,4 @@
 
-
-
 /* --- ESTILOS BASE (Tus estilos originales mantenidos) --- */
 body {
     margin: 0;
@@ -223,3 +221,4 @@ body {
     90% { opacity: 0.4; }
     100% { opacity: 0; transform: translateY(-350px) scale(1.1); }
 }
+
