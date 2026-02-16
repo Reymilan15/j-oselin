@@ -1,3 +1,10 @@
+Entiendo perfectamente. El error Unexpected token '}' que te aparecía es porque en el código que me pasaste la función drawConstellations no estaba declarada (faltaba el inicio function drawConstellations(positions) {) y el bucle interno estaba suelto.
+
+He corregido eso y he aplicado las mejoras de realismo y precisión que pediste: ahora las líneas nacen exactamente del centro de las estrellas y las estrellas tienen un aspecto mucho más natural.
+
+Aquí tienes el código completo y corregido. Copia y pega todo esto en tu archivo galaxia.js:
+
+JavaScript
 
 const dedications = [
   "Como Virgo, siempre busqué el orden, hasta que tu fuego de Aries me enseñó la belleza del caos.",
@@ -65,13 +72,19 @@ function createStars() {
     const star = document.createElement('div');
     star.className = 'star';
     star.dataset.star = i;
+    
+    // Mejora visual: Estrellas más reales con gradientes
+    star.style.background = "radial-gradient(circle, #fff 20%, rgba(255,255,255,0.7) 40%, transparent 80%)";
+    star.style.borderRadius = "50%";
+    star.style.boxShadow = "0 0 8px #fff";
+    
     galaxy.appendChild(star); stars.push(star);
     star.addEventListener('click', e => {
       e.stopPropagation();
       zoom = 2.2; 
       dedicationBox.style.display = 'block';
       dedicationText.textContent = dedications[i];
-      let x = parseFloat(star.style.left) + 30;
+      let x = parseFloat(star.style.left) + 20;
       let y = parseFloat(star.style.top) - 20;
       dedicationBox.style.left = x + 'px';
       dedicationBox.style.top = y + 'px';
@@ -80,11 +93,8 @@ function createStars() {
   }
 }
 
-// Función global para los botones (Cámara fija, solo cambia el brillo)
 window.focusOn = function(type) {
   currentFilter = type;
-
-  // Mantenemos el zoom y el centro constantes para que no haya movimiento de cámara
   zoom = 1.1; 
   center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
@@ -94,7 +104,6 @@ window.focusOn = function(type) {
     let isAriesStar = (i >= 14 && i <= 22);
 
     if (type === 'all') {
-      // Ambas brillan intensamente
       if (isVirgoStar || isAriesStar) {
         star.style.opacity = "1";
         star.style.filter = "brightness(2) drop-shadow(0 0 12px #fff)";
@@ -110,7 +119,7 @@ window.focusOn = function(type) {
         star.style.filter = "brightness(2.5) drop-shadow(0 0 15px #fff)";
         star.style.transform = "scale(1.6)";
       } else {
-        star.style.opacity = "0.05"; // Casi apagadas
+        star.style.opacity = "0.05";
         star.style.filter = "grayscale(1) brightness(0.3)";
         star.style.transform = "scale(0.8)";
       }
@@ -120,7 +129,7 @@ window.focusOn = function(type) {
         star.style.filter = "brightness(2.5) drop-shadow(0 0 15px #ff8aae)";
         star.style.transform = "scale(1.6)";
       } else {
-        star.style.opacity = "0.05"; // Casi apagadas
+        star.style.opacity = "0.05";
         star.style.filter = "grayscale(1) brightness(0.3)";
         star.style.transform = "scale(0.8)";
       }
@@ -128,8 +137,11 @@ window.focusOn = function(type) {
   });
 };
 
-// Ajuste en drawConstellations para que las líneas sigan el mismo comportamiento
-constellation.forEach(([idxA, idxB]) => {
+// FUNCIÓN CORREGIDA: drawConstellations con parámetros de precisión
+function drawConstellations(positions) {
+  document.querySelectorAll('.const-line').forEach(l => l.remove());
+  
+  constellation.forEach(([idxA, idxB]) => {
     if (positions[idxA] && positions[idxB]) {
       let isVirgo = (idxA <= 12 && idxB <= 12);
       let isAries = (idxA >= 14 && idxB <= 19);
@@ -142,7 +154,6 @@ constellation.forEach(([idxA, idxB]) => {
         const [ax, ay] = positions[idxA];
         const [bx, by] = positions[idxB];
         
-        // Calculamos el tamaño del contenedor SVG
         const minX = Math.min(ax, bx);
         const minY = Math.min(ay, by);
         const width = Math.abs(ax - bx);
@@ -151,31 +162,41 @@ constellation.forEach(([idxA, idxB]) => {
         const lineContainer = document.createElement('div');
         lineContainer.className = 'const-line';
         
-        // Ajuste de precisión: las coordenadas X1, Y1 dentro del SVG deben ser relativas al contenedor
         lineContainer.innerHTML = `
-          <svg width="${width + 20}" height="${height + 20}" 
+          <svg width="${width + 40}" height="${height + 40}" 
                style="position:absolute; left:${minX}px; top:${minY}px; overflow:visible; pointer-events:none;">
             <line x1="${ax - minX}" y1="${ay - minY}" 
                   x2="${bx - minX}" y2="${by - minY}" 
-                  stroke="${currentFilter === 'aries' ? 'rgba(255,138,174,0.6)' : 'rgba(255,255,255,0.5)'}" 
-                  stroke-width="1.5" 
-                  style="filter: blur(1px);" />
+                  stroke="${currentFilter === 'aries' ? 'rgba(255,138,174,0.7)' : 'rgba(255,255,255,0.4)'}" 
+                  stroke-width="1.2" 
+                  style="filter: drop-shadow(0 0 3px white);" />
           </svg>`;
         galaxy.appendChild(lineContainer);
       }
     }
   });
 }
+
 function animateStars() {
   const positions = [];
   for (let i = 0; i < starsTotal; i++) {
     const [cx, cy] = spiralGalaxyPos(i, zoom, galaxyRotation);
     positions.push([cx, cy]);
-    stars[i].style.left = (cx - 11) + 'px';
-    stars[i].style.top = (cy - 11) + 'px';
-    const starSize = 14 + (zoom * 2);
+
+    // Cálculo de tamaño para que no sean solo puntos
+    const isMainStar = (i <= 13 || (i >= 14 && i <= 22));
+    const starSize = (isMainStar ? 8 : 4); 
+
+    // CENTRADO EXACTO: Restamos la mitad del tamaño para que cx,cy sea el centro real
     stars[i].style.width = starSize + 'px';
     stars[i].style.height = starSize + 'px';
+    stars[i].style.left = (cx - starSize / 2) + 'px';
+    stars[i].style.top = (cy - starSize / 2) + 'px';
+    
+    // Parpadeo sutil para realismo
+    if (Math.random() > 0.98) {
+        stars[i].style.opacity = Math.random();
+    }
   }
   drawConstellations(positions);
   return positions;
@@ -271,6 +292,7 @@ function spawnWhispers() {
 }
 
 setInterval(spawnWhispers, 12000);
+
 
 
 
