@@ -129,45 +129,39 @@ window.focusOn = function(type) {
 };
 
 // Ajuste en drawConstellations para que las líneas sigan el mismo comportamiento
-function drawConstellations(positions) {
-  document.querySelectorAll('.const-line').forEach(l => l.remove());
-  
-  constellation.forEach(([idxA, idxB]) => {
+constellation.forEach(([idxA, idxB]) => {
     if (positions[idxA] && positions[idxB]) {
       let isVirgo = (idxA <= 12 && idxB <= 12);
       let isAries = (idxA >= 14 && idxB <= 19);
       
-      let showLine = false;
-      let opacity = "0.2";
-      let strokeColor = "rgba(255, 255, 255, ";
-
-      if (currentFilter === 'all') {
-        if (isVirgo || isAries) {
-            showLine = true;
-            opacity = "0.8"; // Brillo fuerte para ambas líneas
-        }
-      } else if (currentFilter === 'virgo' && isVirgo) {
-        showLine = true;
-        opacity = "1";
-      } else if (currentFilter === 'aries' && isAries) {
-        showLine = true;
-        opacity = "1";
-        strokeColor = "rgba(255, 138, 174, "; // Color Aries
-      }
+      let showLine = (currentFilter === 'all') || 
+                     (currentFilter === 'virgo' && isVirgo) || 
+                     (currentFilter === 'aries' && isAries);
 
       if (showLine) {
         const [ax, ay] = positions[idxA];
         const [bx, by] = positions[idxB];
-        const line = document.createElement('div');
-        line.className = 'const-line';
-        const w = Math.abs(ax - bx);
-        const h = Math.abs(ay - by);
         
-        line.innerHTML = `<svg width="${w + 100}" height="${h + 100}" style="position:absolute;left:${Math.min(ax, bx)}px;top:${Math.min(ay, by)}px;pointer-events:none; filter: drop-shadow(0 0 8px white);">
-          <line x1="${ax > bx ? w : 0}" y1="${ay > by ? h : 0}" x2="${ax < bx ? w : 0}" y2="${ay < by ? h : 0}" 
-          stroke="${strokeColor}${opacity})" stroke-width="2.5" />
-        </svg>`;
-        galaxy.appendChild(line);
+        // Calculamos el tamaño del contenedor SVG
+        const minX = Math.min(ax, bx);
+        const minY = Math.min(ay, by);
+        const width = Math.abs(ax - bx);
+        const height = Math.abs(ay - by);
+
+        const lineContainer = document.createElement('div');
+        lineContainer.className = 'const-line';
+        
+        // Ajuste de precisión: las coordenadas X1, Y1 dentro del SVG deben ser relativas al contenedor
+        lineContainer.innerHTML = `
+          <svg width="${width + 20}" height="${height + 20}" 
+               style="position:absolute; left:${minX}px; top:${minY}px; overflow:visible; pointer-events:none;">
+            <line x1="${ax - minX}" y1="${ay - minY}" 
+                  x2="${bx - minX}" y2="${by - minY}" 
+                  stroke="${currentFilter === 'aries' ? 'rgba(255,138,174,0.6)' : 'rgba(255,255,255,0.5)'}" 
+                  stroke-width="1.5" 
+                  style="filter: blur(1px);" />
+          </svg>`;
+        galaxy.appendChild(lineContainer);
       }
     }
   });
@@ -277,6 +271,7 @@ function spawnWhispers() {
 }
 
 setInterval(spawnWhispers, 12000);
+
 
 
 
