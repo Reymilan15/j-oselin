@@ -1,11 +1,4 @@
 
-El código que tienes es bastante sólido, pero el error que hace que "no responda" o que se detenga la animación es un pequeño detalle técnico en la función animateStars. Estás intentando acceder a una variable llamada star que no está definida dentro de ese bucle (la variable correcta es stars[i]).
-
-He corregido ese detalle y optimizado el posicionamiento de la dedicatoria para que en teléfonos no se corte, manteniendo intactos todos tus textos, dedicatorias y lógica de constelaciones.
-
-Aquí tienes el script corregido:
-
-JavaScript
 
 // --- VARIABLES DE CONTROL (Manteniendo tus datos) ---
 const dedications = [
@@ -281,6 +274,7 @@ function spawnWhispers() {
   }
 }
 setInterval(spawnWhispers, 12000);
+
 
 
 
