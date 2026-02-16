@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Nuestra galaxia de amor ✨</title>
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="welcome">
+    <div class="welcome-box">
+      <h1>Mi amor... <br>¡Esta galaxia es para ti!</h1>
+      <p>Eres mi estrella eterna, la que da sentido y luz a todo mi universo.<br>
+      Explora y descubre cada razón por la que TE AMO tanto...</p>
+      <button id="enterBtn">Abrir nuestro universo ✨</button>
+    </div>
+  </div>
+  <canvas id="galaxyCanvas"></canvas>
+  <div id="galaxy" style="display:none"></div>
+  <div id="dedication" class="dedication" style="display: none;">
+    <span class="close">&times;</span>
+    <span class="dedication-text"></span>
+  </div>
+  <div id="zoomMessage">Sin ti todo sería una galaxia fría y oscura...</div>
+  <div id="musicControl">
+    <audio id="bgmusic" loop>
+      <source src="https://cdn.pixabay.com/audio/2022/10/16/audio_127b5e0fa6.mp3" type="audio/mp3">
+    </audio>
+    <button id="musicBtn">🎵 Encender música</button>
+  </div>
+  <div id="whispers"></div>
+  <script src="galaxia.js"></script>
+</body>
+</html>

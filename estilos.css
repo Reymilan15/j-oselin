@@ -1,0 +1,158 @@
+body {
+  margin: 0; padding: 0; overflow: hidden;
+  font-family: 'Quicksand', Arial, sans-serif;
+  background: #180034;
+}
+#welcome {
+  position: fixed; width: 100vw; height: 100vh; z-index: 15;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(20,7,44,0.93);
+  animation: fadeIn 2s;
+}
+.welcome-box {
+  background: rgba(255,255,255,0.09);
+  padding: 38px 40px;
+  border-radius: 24px; text-align: center;
+  box-shadow: 0 4px 60px 0 #fff9;
+  color: #ffeceb;
+  border: 1.5px solid #c87ce2;
+}
+.welcome-box h1 {
+  font-family: 'Pacifico', cursive;
+  font-size: 2.4em;
+  margin-bottom: .7em;
+}
+.welcome-box p { font-size: 1.1em; margin-bottom: 2em; }
+#welcome button {
+  font-size: 1.15em; padding: 12px 36px;
+  border: none; border-radius: 22px;
+  color: #fff0ff;
+  background: linear-gradient(90deg, #9644fd 20%, #c07ef3 80%);
+  cursor: pointer;
+  font-family: 'Pacifico', cursive;
+  letter-spacing: 2px;
+  box-shadow: 0 2px 22px #ac11c340;
+  transition: background .19s, transform .16s;
+}
+#welcome button:hover {
+  background: linear-gradient(90deg, #c07ef3 20%, #9644fd 80%);
+  transform: scale(1.08);
+}
+#galaxyCanvas {
+  position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; z-index: 1;
+}
+#galaxy {
+  width: 100vw; height: 100vh;
+  position: fixed; inset: 0; z-index: 3;
+}
+.star {
+  position: absolute;
+  width: 22px; height: 22px;
+  border-radius: 100%; cursor: pointer;
+  background: radial-gradient(circle at 40% 30%, #fff9de 0%, #dfc7ff 70%, #a146fa10 100%);
+  box-shadow: 0 0 16px 3px #fffbe9, 0 0 80px 12px #f9eaff66;
+  animation: twinkle 1.8s infinite alternate; transition: transform .21s;
+  z-index: 3;
+}
+.star:hover { transform: scale(1.53) rotate(-8deg); z-index: 10; animation: none;}
+@keyframes twinkle {
+  0% { opacity: 0.75; }
+  60% { opacity: 1; }
+  100% { opacity: 0.82;}
+}
+.const-line {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  opacity:.42;
+}
+.dedication {
+  position: absolute;
+  min-width: 260px; max-width: 340px;
+  background: rgba(34,34,34,0.94);
+  color: #ffeef6;
+  border-radius: 18px;
+  padding: 28px 35px 24px 43px;
+  font-size: 1.3em;
+  z-index: 22;
+  font-family: 'Pacifico', cursive;
+  box-shadow: 0 0 40px 14px #b38df1cc;
+  animation: appear 0.36s cubic-bezier(.88,.19,.50,1.11), drift 2.6s infinite alternate cubic-bezier(.88,-0.15,.60,2);
+}
+@keyframes appear { from { opacity: 0; transform: scale(0.7);} to   { opacity: 1; transform: scale(1);}}
+@keyframes drift  { to { transform: translateY(-7px);} }
+.dedication .close {
+  position: absolute; left: 12px; top: 10px;
+  color: #ffe1fa; font-size: 1.2em; cursor: pointer; opacity: .67;
+  transition: color .18s;
+}
+.dedication .close:hover { color: #a36ee1; }
+#musicControl {
+  position: fixed; top: 24px; right: 32px; z-index: 32;
+}
+#musicBtn {
+  font-family: 'Pacifico', cursive;
+  font-size: 1em; padding: 6px 18px;
+  background: #eeaaff; color: #47275e; border: none; border-radius: 14px;
+  cursor: pointer; box-shadow: 0 2px 12px #b48bf670;
+  transition: background .18s;
+}
+#musicBtn.on { background: #d76ef3; color: #fff;}
+.heart {
+  position: absolute;
+  width: 30px; height: 28px;
+  opacity: .8; pointer-events: none;
+  animation: floatHeart 7s linear;
+  z-index: 10;
+}
+@keyframes floatHeart {
+  0% { opacity:.32; transform: scale(.7);}
+  30% { opacity:1;}
+  75% { opacity:.87;}
+  100% { opacity:0; transform: scale(1.22) translateY(-160px);}
+}
+#zoomMessage {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ffe8f6;
+  font-family: 'Pacifico',cursive;
+  font-size: 2.1em;
+  background: rgba(33,10,38,0.84);
+  padding: 36px 75px;
+  border-radius: 32px;
+  box-shadow: 0 0 80px 18px #bb7ae7cc;
+  z-index: 100;
+  display:none;
+  text-align:center;
+  max-width:93vw;
+  animation: appear 0.8s cubic-bezier(.88,.19,.50,1.11);
+}
+#whispers {
+  position: fixed; bottom: 0; left: 0; width:100vw; height:100vh; z-index: 2; pointer-events: none;
+}
+.whisper {
+  position: absolute;
+  font-family: 'Pacifico', cursive;
+  font-size: 1.1em;
+  opacity: 0.21;
+  color: #fd96fb;
+  animation: whisperMove 22s linear;
+  pointer-events:none;
+  white-space:nowrap;
+  user-select:none;
+}
+@keyframes whisperMove {
+  to { transform: translateY(-280px) scale(1.09) rotate(-3deg);}
+}
+/* Responsive dedication msg */
+@media (max-width: 600px) {
+  .dedication {
+    min-width: 80vw !important; font-size: 1em;
+    padding-left:15px; padding-right:12px;
+  }
+  #zoomMessage {
+    font-size:1.1em; padding:12vw 4vw; border-radius:17px;
+  }
+}
+
+
