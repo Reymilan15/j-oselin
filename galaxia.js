@@ -1,4 +1,4 @@
-dedications = [
+const dedications = [
   "Como Virgo, siempre busqué el orden, hasta que tu fuego de Aries me enseñó la belleza del caos.",
   "Eres mi carnero valiente, la que se lanza al universo sin miedo y me lleva de la mano.",
   "Mi mente de Virgo analiza todo, pero mi corazón solo sabe que te ama sin medidas.",
@@ -252,5 +252,6 @@ function spawnWhispers() {
 }
 
 setInterval(spawnWhispers, 12000);
+
 
 
